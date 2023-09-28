@@ -8,8 +8,14 @@ import {
   Scripts,
   ScrollRestoration,
 } from "@remix-run/react";
-
+import styles from "./tailwind.css";
 export const links: LinksFunction = () => [
+  { rel: "stylesheet", href: styles },
+  {
+    rel: "icon",
+    href: "/favicon.svg",
+    type: "image/svg+xml",
+  },
   ...(cssBundleHref ? [{ rel: "stylesheet", href: cssBundleHref }] : []),
 ];
 
@@ -22,7 +28,7 @@ export default function App() {
         <Meta />
         <Links />
       </head>
-      <body>
+      <body className="font-Mona">
         <Outlet />
         <ScrollRestoration />
         <Scripts />
