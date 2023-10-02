@@ -22,9 +22,7 @@
     "isbot": "^3.6.8",
     "lucide-react": "^0.279.0",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "tailwind-merge": "^1.14.0",
-    "tailwindcss-animate": "^1.0.7"
+    "react-dom": "^18.2.0"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20230518.0",
@@ -35,6 +33,8 @@
     "eslint": "^8.38.0",
     "tailwindcss": "^3.3.3",
     "typescript": "^5.1.0",
+    "tailwind-merge": "^1.14.0",
+    "tailwindcss-animate": "^1.0.7",
     "wrangler": "^3.1.1"
   },
   "engines": {

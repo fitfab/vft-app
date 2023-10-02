@@ -64,9 +64,9 @@ export default function Index() {
   const [mobileNavActive, setMobileNavActive] = useState(false);
 
   const toggleNav = (event: React.MouseEvent<HTMLButtonElement>) => {
-    console.log(event.currentTarget.dataset.toggle);
     setMobileNavActive(!mobileNavActive);
   };
+
   const handleScroll = (event: React.MouseEvent<HTMLButtonElement>) => {
     const action = event.currentTarget.textContent?.toLowerCase();
     // 👇 Scroll to the section
@@ -75,42 +75,46 @@ export default function Index() {
     } else {
       contactEl.current?.scrollIntoView();
     }
+    if (mobileNavActive) {
+      setMobileNavActive(!mobileNavActive);
+    }
   };
-  console.log("about to render");
+
   return (
     // md:backdrop-blur-sm md:bg-slate-300/15
     <main>
-      <header className="fixed top-0 left-0 right-0  z-50">
-        <div className="relative flex justify-between items-center md:container md:mx-auto p-4">
-          <div className="w-24 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-white/25 from-0% to-transparent to-70%">
+      <header className="top-0 left-0 right-0  z-50">
+        <div className="relative flex justify-between md:container md:mx-auto p-4">
+          <div className="w-20">
             <Logo />
           </div>
           <button
-            className="fixed z-[9999] right-8 top-8"
+            className="fixed z-[9999] right-8 top-7"
             aria-controls="primary-navigation"
-            data-toggle="open"
             onClick={toggleNav}
           >
             <span className="sr-only">menu</span>
             {mobileNavActive ? (
               <X className="md:hidden" stroke="white" size={32} />
             ) : (
-              <Menu className="md:hidden" stroke="white" size={32} />
+              <Menu className="md:hidden stroke-brand" size={32} />
             )}
           </button>
           <nav
             id="primary-navigation"
-            className="fixed inset-[0_0_0_32vw] bg-brand/50 backdrop-blur-md flex flex-col gap-4 pt-20 px-8 md:static md:flex-row md:pt-0 md:px-[1px] md:gap-[1px]"
+            className={`fixed inset-[0_0_0_32vw] bg-brand/50 backdrop-blur-md flex flex-col gap-4 pt-28 px-8 md:static md:flex-row md:pt-0 md:px-[1px] md:bg-transparent md:backdrop-blur-none ${
+              mobileNavActive ? "translate-x-[0vw]" : "translate-x-[78vw]"
+            } transition-all`}
           >
             <button
               onClick={handleScroll}
-              className="block py-2 px-4 uppercase text-clamp-base cursor-pointer text-left text-white bg-white/20"
+              className="block py-2 px-4 uppercase text-clamp-sm cursor-pointer text-left text-brand bg-white/70 rounded-md z-[1000]"
             >
               Services
             </button>
             <button
               onClick={handleScroll}
-              className="block py-2 px-4 uppercase text-clamp-base cursor-pointer text-left text-white bg-white/20"
+              className="block py-2 px-4 uppercase text-clamp-sm cursor-pointer text-left text-brand bg-white/70 rounded-md"
             >
               Contact
             </button>
@@ -118,7 +122,7 @@ export default function Index() {
         </div>
       </header>
       <video
-        className="w-[100vw]"
+        className="relative w-[100vw] -z-10"
         muted
         loop
         autoPlay
@@ -155,7 +159,7 @@ export default function Index() {
           ref={contactEl}
         >
           <h2 className="scroll-m-20 pb-2 text-clamp-xl font-semibold tracking-tight transition-colors first:mt-0">
-            Contact Us
+            Contact Details
           </h2>
           <p className="text-clamp-base mb-6 w-[75%]">
             I take the art of filmmaking to new heights with cutting-edge drone
@@ -163,7 +167,7 @@ export default function Index() {
             realizing your creative vision.
           </p>
           <p className="text-clamp-base mb-6">
-            Various ways to connect with me:
+            Please reach out if you any question:
           </p>
           <p className="text-clamp-base">Andrew Pollino</p>
           <p className="text-clamp-base">
