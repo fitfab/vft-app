@@ -81,7 +81,6 @@ export default function Index() {
   };
 
   return (
-    // md:backdrop-blur-sm md:bg-slate-300/15
     <main>
       <header className="top-0 left-0 right-0  z-50">
         <div className="relative flex justify-between md:container md:mx-auto p-4">
@@ -144,9 +143,6 @@ export default function Index() {
                   </CardHeader>
 
                   <CardContent>{caption}</CardContent>
-                  {/* <CardFooter>
-                    <Link to={callToAction.ctaUrl}>{callToAction.ctaCopy}</Link>
-                  </CardFooter> */}
                 </Card>
               );
             })}
