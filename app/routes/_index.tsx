@@ -2,9 +2,8 @@
 import type { MetaFunction } from "@remix-run/cloudflare";
 import { useLoaderData } from "@remix-run/react";
 import { GraphQLClient, gql } from "graphql-request";
-import { Menu, X } from "lucide-react";
 import { useRef, useState } from "react";
-import { Logo } from "~/components";
+import { Logo, Navigation } from "~/components";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 
 const PAGE_QUERY = gql`
@@ -56,16 +55,14 @@ export const loader = async () => {
   const response = await graphQLClient.request(PAGE_QUERY, variables);
   return response;
 };
+const navRoutes = [{ cta: "services" }, { cta: "contact" }];
 
 export default function Index() {
   const { page } = useLoaderData<Response>();
   const serviceEl = useRef<HTMLDivElement | null>(null);
   const contactEl = useRef<HTMLDivElement | null>(null);
+  const touch = useRef(false);
   const [mobileNavActive, setMobileNavActive] = useState(false);
-
-  const toggleNav = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setMobileNavActive(!mobileNavActive);
-  };
 
   const handleScroll = (event: React.MouseEvent<HTMLButtonElement>) => {
     const action = event.currentTarget.textContent?.toLowerCase();
@@ -75,8 +72,10 @@ export default function Index() {
     } else {
       contactEl.current?.scrollIntoView();
     }
-    if (mobileNavActive) {
-      setMobileNavActive(!mobileNavActive);
+    if (touch.current) {
+      if (mobileNavActive) {
+        setMobileNavActive(!mobileNavActive);
+      }
     }
   };
 
@@ -84,40 +83,10 @@ export default function Index() {
     <main>
       <header className="top-0 left-0 right-0  z-50">
         <div className="relative flex justify-between md:container md:mx-auto p-4">
-          <div className="w-20">
+          <div className="w-16 md:w-20">
             <Logo />
           </div>
-          <button
-            className="fixed z-[9999] right-8 top-7"
-            aria-controls="primary-navigation"
-            onClick={toggleNav}
-          >
-            <span className="sr-only">menu</span>
-            {mobileNavActive ? (
-              <X className="md:hidden" stroke="white" size={32} />
-            ) : (
-              <Menu className="md:hidden stroke-brand" size={32} />
-            )}
-          </button>
-          <nav
-            id="primary-navigation"
-            className={`fixed inset-[0_0_0_32vw] bg-brand/50 backdrop-blur-md flex flex-col gap-4 pt-28 px-8 md:static md:flex-row md:pt-0 md:px-[1px] md:bg-transparent md:backdrop-blur-none ${
-              mobileNavActive ? "translate-x-[0vw]" : "translate-x-[78vw]"
-            } transition-all`}
-          >
-            <button
-              onClick={handleScroll}
-              className="block py-2 px-4 uppercase text-clamp-sm cursor-pointer text-left text-brand bg-white/70 rounded-md z-[1000]"
-            >
-              Services
-            </button>
-            <button
-              onClick={handleScroll}
-              className="block py-2 px-4 uppercase text-clamp-sm cursor-pointer text-left text-brand bg-white/70 rounded-md"
-            >
-              Contact
-            </button>
-          </nav>
+          <Navigation scrollAction={handleScroll} routes={navRoutes} />
         </div>
       </header>
       <video
@@ -127,7 +96,7 @@ export default function Index() {
         autoPlay
         poster="https://res.cloudinary.com/dcvxv60gw/image/upload/q_auto,f_auto/v1687119087/fitfab/pool-house_yjb8hs"
       >
-        <source src="https://res.cloudinary.com/dcvxv60gw/video/upload/q_auto,f_auto/v1686666056/fitfab/neil_landino_ojaxke" />
+        {/* <source src="https://res.cloudinary.com/dcvxv60gw/video/upload/q_auto,f_auto/v1686666056/fitfab/neil_landino_ojaxke" /> */}
       </video>
       <section className="md:container md:mx-auto px-4 pt-8 pb-10">
         <div ref={serviceEl}>
