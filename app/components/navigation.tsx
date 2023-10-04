@@ -43,7 +43,7 @@ const Navigation = ({ scrollAction, routes }: NavigationProps) => {
   return (
     <nav className="flex gap-4">
       <button
-        className="fixed z-[9999] right-8 top-7"
+        className="fixed z-[9999] right-8 top-6"
         aria-controls="primary-navigation"
         onClick={toggleNav}
       >

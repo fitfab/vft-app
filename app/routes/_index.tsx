@@ -82,7 +82,7 @@ export default function Index() {
   return (
     <main>
       <header className="top-0 left-0 right-0  z-50">
-        <div className="relative flex justify-between md:container md:mx-auto p-4">
+        <div className="fixed top-0 right-0 left-0 flex justify-between md:container md:mx-auto md:relative p-4 bg-white">
           <div className="w-16 md:w-20">
             <Logo />
           </div>
@@ -90,7 +90,7 @@ export default function Index() {
         </div>
       </header>
       <video
-        className="relative w-[100vw] -z-10"
+        className="relative w-[100vw] -z-10 mt-[76px] md:mt-0"
         muted
         loop
         autoPlay
