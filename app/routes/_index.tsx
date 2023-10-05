@@ -114,7 +114,7 @@ export default function Index() {
           </div>
         </div>
       </section>
-      <section className=" bg-brand text-white">
+      <section className=" bg-brand text-white min-h-[30vh]">
         <div
           className="md:container md:mx-auto px-4 pt-8 pb-10"
           ref={contactEl}
