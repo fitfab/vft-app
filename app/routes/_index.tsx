@@ -97,7 +97,7 @@ export default function Index() {
       <section className="md:container md:mx-auto px-4 pt-8 pb-10">
         <div ref={serviceEl}>
           <h2 className="scroll-m-20 pb-2 text-clamp-xl font-semibold tracking-tight transition-colors first:mt-0">
-            Serivices
+            Services
           </h2>
           <div className="grid grid-cols-1 gap-4  md:grid-cols-3">
             {page.services.map(({ title, caption, callToAction }, index) => {
