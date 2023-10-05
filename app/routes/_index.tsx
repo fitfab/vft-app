@@ -91,7 +91,8 @@ export default function Index() {
         autoPlay
         poster="https://res.cloudinary.com/dcvxv60gw/image/upload/q_auto,f_auto/v1687119087/fitfab/pool-house_yjb8hs"
       >
-        <source src="https://res.cloudinary.com/dcvxv60gw/video/upload/q_auto,f_auto/v1686666056/fitfab/neil_landino_ojaxke" />
+        <source src="https://res.cloudinary.com/dcvxv60gw/video/upload/q_auto/v1686666056/fitfab/neil_landino_ojaxke.webm" />
+        <source src="https://res.cloudinary.com/dcvxv60gw/video/upload/q_auto/v1686666056/fitfab/neil_landino_ojaxke.mp4" />
       </video>
       <section className="md:container md:mx-auto px-4 pt-8 pb-10">
         <div ref={serviceEl}>
