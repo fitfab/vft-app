@@ -2,7 +2,7 @@
 import type { MetaFunction } from "@remix-run/cloudflare";
 import { useLoaderData } from "@remix-run/react";
 import { GraphQLClient, gql } from "graphql-request";
-import { useRef, useState } from "react";
+import { useRef } from "react";
 import { Logo, Navigation } from "~/components";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 
@@ -61,42 +61,37 @@ export default function Index() {
   const { page } = useLoaderData<Response>();
   const serviceEl = useRef<HTMLDivElement | null>(null);
   const contactEl = useRef<HTMLDivElement | null>(null);
-  const touch = useRef(false);
-  const [mobileNavActive, setMobileNavActive] = useState(false);
 
   const handleScroll = (event: React.MouseEvent<HTMLButtonElement>) => {
     const action = event.currentTarget.textContent?.toLowerCase();
+
     // 👇 Scroll to the section
     if (action === "services") {
-      serviceEl.current?.scrollIntoView();
+      serviceEl.current?.scrollIntoView(false);
     } else {
-      contactEl.current?.scrollIntoView();
-    }
-    if (touch.current) {
-      if (mobileNavActive) {
-        setMobileNavActive(!mobileNavActive);
-      }
+      contactEl.current?.scrollIntoView(false);
     }
   };
 
   return (
     <main>
       <header className="top-0 left-0 right-0  z-50">
-        <div className="fixed top-0 right-0 left-0 flex justify-between md:container md:mx-auto md:relative p-4 bg-white">
+        <div className="fixed top-0 right-0 left-0 flex justify-between md:container md:mx-auto md:relative p-4 bg-white/50">
           <div className="w-16 md:w-20">
             <Logo />
           </div>
           <Navigation scrollAction={handleScroll} routes={navRoutes} />
         </div>
       </header>
+
       <video
-        className="relative w-[100vw] -z-10 mt-[76px] md:mt-0"
+        className="relative w-[100vw] -z-10 "
         muted
         loop
         autoPlay
         poster="https://res.cloudinary.com/dcvxv60gw/image/upload/q_auto,f_auto/v1687119087/fitfab/pool-house_yjb8hs"
       >
-        {/* <source src="https://res.cloudinary.com/dcvxv60gw/video/upload/q_auto,f_auto/v1686666056/fitfab/neil_landino_ojaxke" /> */}
+        <source src="https://res.cloudinary.com/dcvxv60gw/video/upload/q_auto,f_auto/v1686666056/fitfab/neil_landino_ojaxke" />
       </video>
       <section className="md:container md:mx-auto px-4 pt-8 pb-10">
         <div ref={serviceEl}>

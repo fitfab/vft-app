@@ -28,7 +28,7 @@ export default function App() {
         <Meta />
         <Links />
       </head>
-      <body className="font-Mona">
+      <body className="font-Mona mt-[76px] md:mt-0">
         <Outlet />
         <ScrollRestoration />
         <Scripts />

@@ -9,7 +9,7 @@ type route = {
 };
 
 export interface NavigationProps extends React.HTMLAttributes<HTMLDivElement> {
-  scrollAction?: (event: React.MouseEvent<HTMLButtonElement>) => void;
+  scrollAction: (event: React.MouseEvent<HTMLButtonElement>) => void;
   routes: Array<route>;
 }
 
@@ -18,21 +18,27 @@ const Navigation = ({ scrollAction, routes }: NavigationProps) => {
 
   const toggleNav = (event: React.MouseEvent<HTMLButtonElement>) => {
     setMobileNavActive(!mobileNavActive);
-    console.log(mobileNavActive);
   };
 
-  const RouteView = ({
-    className,
-    ...props
-  }: React.ButtonHTMLAttributes<HTMLButtonElement>) => {
+  interface RouteViewProps
+    extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+    mobile?: boolean;
+  }
+  const RouteView = ({ className, mobile, ...props }: RouteViewProps) => {
     return routes.map((route, index) => (
       <button
         className={cn(
           "py-2 px-4 uppercase text-clamp-sm cursor-pointer text-left bg-white/70 rounded-md z-[1000]",
           className
         )}
-        onClick={scrollAction}
+        onClick={(event) => {
+          scrollAction(event);
+          if (event.currentTarget.dataset.mobile) {
+            toggleNav(event);
+          }
+        }}
         key={index}
+        data-mobile={mobile ? "mobile" : "desktop"}
         {...props}
       >
         {route.cta}
@@ -56,12 +62,12 @@ const Navigation = ({ scrollAction, routes }: NavigationProps) => {
       </button>
       <RouteView className="hidden md:block" />
       <section
-        className={`fixed inset-[0_0_0_32vw] bg-brand/50 backdrop-blur-md flex flex-col gap-4 pt-28 px-8 md:hidden md:flex-row md:pt-0 md:px-[1px] md:bg-transparent md:backdrop-blur-none ${
+        className={`fixed inset-[0_0_0_32vw] bg-brand/50 backdrop-blur-sm flex flex-col gap-4 pt-28 px-8 md:hidden md:flex-row md:pt-0 md:px-[1px] md:bg-transparent md:backdrop-blur-none ${
           mobileNavActive ? "translate-x-[0vw]" : "translate-x-[78vw]"
         } transition-all`}
         id="primary-navigation"
       >
-        <RouteView />
+        <RouteView mobile={true} />
       </section>
     </nav>
   );
