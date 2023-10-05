@@ -28,7 +28,7 @@ const Navigation = ({ scrollAction, routes }: NavigationProps) => {
     return routes.map((route, index) => (
       <button
         className={cn(
-          "py-2 px-4 uppercase text-clamp-sm cursor-pointer text-left bg-white/70 rounded-md z-[1000]",
+          "py-2 px-4 uppercase text-clamp-base cursor-pointer text-left bg-white/70 rounded-md z-[1000]",
           className
         )}
         onClick={(event) => {
