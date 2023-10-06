@@ -1,12 +1,11 @@
 // NOTE: This is the index route the "root route"
-import { AdvancedVideo } from "@cloudinary/react";
 import type { MetaFunction } from "@remix-run/cloudflare";
 import { useLoaderData } from "@remix-run/react";
 import { GraphQLClient, gql } from "graphql-request";
 import { useRef } from "react";
 import { Logo, Navigation } from "~/components";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
-import { cld } from "~/lib/utils";
+
 const PAGE_QUERY = gql`
   query page($slug: String) {
     page(where: { slug: $slug }) {
@@ -85,13 +84,15 @@ export default function Index() {
         </div>
       </header>
 
-      <AdvancedVideo
-        className="w-[100vw]"
+      <video
+        className="relative w-[100vw] -z-10 "
         muted
         loop
         autoPlay
-        cldVid={cld.video("neil_landino_ojaxke").quality("auto")}
-      />
+        poster="https://res.cloudinary.com/dcvxv60gw/image/upload/q_auto,f_auto/v1687119087/fitfab/pool-house_yjb8hs"
+      >
+        <source src="https://res.cloudinary.com/dcvxv60gw/video/upload/q_auto,f_auto/v1686666056/neil_landino_ojaxke" />
+      </video>
       <section className="md:container md:mx-auto px-4 pt-8 pb-10">
         <div ref={serviceEl}>
           <h2 className="scroll-m-20 pb-2 text-clamp-xl font-semibold tracking-tight transition-colors first:mt-0">
