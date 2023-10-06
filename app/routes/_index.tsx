@@ -86,7 +86,7 @@ export default function Index() {
       </header>
 
       <AdvancedVideo
-        className="relative w-[100vw] -z-10 "
+        className="w-[100vw]"
         muted
         loop
         autoPlay
