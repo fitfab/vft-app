@@ -24,3 +24,11 @@ Configure the "Build command" should be set to `npm run build`, and the "Build o
 ## Tailwind setup
 
 using Tailwinfd for styles
+
+## Auth setup
+
+ref: https://github.com/remix-run/examples/tree/main/remix-auth-form
+
+Required packages as dependencies:
+
+`npm install remix-auth remix-auth-form`

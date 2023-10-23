@@ -1,6 +1,6 @@
 // NOTE: This is the index route the "root route"
 import { AdvancedVideo } from "@cloudinary/react";
-import type { MetaFunction } from "@remix-run/cloudflare";
+import type { LoaderFunctionArgs, MetaFunction } from "@remix-run/cloudflare";
 import { useLoaderData } from "@remix-run/react";
 import { GraphQLClient, gql } from "graphql-request";
 import { useRef } from "react";
@@ -46,7 +46,7 @@ type Page = {
 
 type Response = { page: Page };
 
-export const loader = async () => {
+export const loader = async ({ context }: LoaderFunctionArgs) => {
   const endPoint =
     "https://api-us-east-1-shared-usea1-02.hygraph.com/v2/clj1ad01r1cbl01uq5i4m0c2p/master";
 
@@ -54,6 +54,7 @@ export const loader = async () => {
   const variables = { slug: "visual-flight-technology" };
 
   const response = await graphQLClient.request(PAGE_QUERY, variables);
+  console.log("_index: .env ", context.env);
   return response;
 };
 const navRoutes = [{ cta: "services" }, { cta: "contact" }];
