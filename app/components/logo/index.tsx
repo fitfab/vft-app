@@ -1,6 +1,12 @@
-export interface LogoProps extends React.SVGProps<SVGSVGElement> {
+import { ComponentProps } from "react";
+// export interface LogoProps extends React.SVGProps<SVGSVGElement> {
+//   reverse?: boolean;
+// }
+
+type LogoProps = ComponentProps<"svg"> & {
   reverse?: boolean;
-}
+};
+
 export function Logo(props: LogoProps) {
   return (
     <svg
