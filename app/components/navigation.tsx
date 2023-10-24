@@ -34,11 +34,10 @@ const Navigation = ({ scrollAction, routes, auth }: NavigationProps) => {
     auth: string | undefined;
     className?: string;
   }) => {
-    console.log("auth?", typeof auth, auth);
     if (auth) {
       return (
         <Form method="post" className={cn("flex", className)}>
-          <button className="py-2 px-4 uppercase text-clamp-base cursor-pointer text-left bg-white/70 rounded-md z-[1000]">
+          <button className="w-full py-2 px-4 uppercase text-clamp-base cursor-pointer text-left bg-white/70 rounded-md z-[1000]">
             Log Out
           </button>
         </Form>
@@ -93,7 +92,7 @@ const Navigation = ({ scrollAction, routes, auth }: NavigationProps) => {
         )}
       </button>
       <RouteView className="hidden md:block" />
-      <AuthLink auth={auth} className="hidden md:block" />
+      <AuthLink auth={auth} className="hidden md:flex" />
       <section
         className={`fixed inset-[0_0_0_32vw] bg-brand/50 backdrop-blur-sm flex flex-col gap-4 pt-28 px-8 md:hidden md:flex-row md:pt-0 md:px-[1px] md:bg-transparent md:backdrop-blur-none ${
           mobileNavActive ? "translate-x-[0vw]" : "translate-x-[78vw]"

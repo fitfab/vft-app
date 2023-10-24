@@ -66,11 +66,7 @@ export const loader = async ({ request, context }: LoaderFunctionArgs) => {
     PAGE_QUERY,
     variables
   )) as Response;
-  const email = await auth.isAuthenticated(request, {
-    // failureRedirect: "/login",
-  });
-  // TODO: remove this before committing the code.
-  console.log("_index: .env ", context);
+  const email = await auth.isAuthenticated(request);
 
   return { email, page: response.page };
 };
@@ -92,7 +88,7 @@ export default function Index() {
       contactEl.current?.scrollIntoView(false);
     }
   };
-  console.log("INDEX: =========", email);
+
   return (
     <main>
       <header className="top-0 left-0 right-0  z-50">
