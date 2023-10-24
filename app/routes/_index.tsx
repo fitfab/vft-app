@@ -17,6 +17,9 @@ const PAGE_QUERY = gql`
     page(where: { slug: $slug }) {
       title
       slug
+      heroes {
+        videoId
+      }
       services {
         title
         caption
@@ -45,11 +48,16 @@ type Service = {
     ctaUrl: string;
   };
 };
+
+type Heroes = {
+  videoId: string;
+};
 type Services = Service[];
 
 type Page = {
   title: string;
   slug: string;
+  heroes: Array<Heroes>;
   services: Services;
 };
 
@@ -109,7 +117,7 @@ export default function Index() {
         muted
         loop
         autoPlay
-        cldVid={cld.video("neil_landino_ojaxke").quality("auto")}
+        cldVid={cld.video(page.heroes[0].videoId).quality("auto")}
       />
       <section className="md:container md:mx-auto px-4 pt-8 pb-10">
         <div ref={serviceEl}>
