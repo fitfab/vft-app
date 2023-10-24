@@ -69,10 +69,7 @@ export default function Screen() {
       ) : (
         <p>Please provide your credentials</p>
       )}
-      <Button
-        variant={error?.message ? "destructive" : "default"}
-        className="mt-6"
-      >
+      <Button variant="default" className="mt-6">
         Log In
       </Button>
     </Form>
