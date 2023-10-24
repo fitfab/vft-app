@@ -1,3 +1,4 @@
+import { Form, NavLink } from "@remix-run/react";
 import { Menu, X } from "lucide-react";
 import { useState } from "react";
 
@@ -11,9 +12,10 @@ type route = {
 export interface NavigationProps extends React.HTMLAttributes<HTMLDivElement> {
   scrollAction: (event: React.MouseEvent<HTMLButtonElement>) => void;
   routes: Array<route>;
+  auth?: string | undefined;
 }
 
-const Navigation = ({ scrollAction, routes }: NavigationProps) => {
+const Navigation = ({ scrollAction, routes, auth }: NavigationProps) => {
   const [mobileNavActive, setMobileNavActive] = useState(false);
 
   const toggleNav = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -24,6 +26,36 @@ const Navigation = ({ scrollAction, routes }: NavigationProps) => {
     extends React.ButtonHTMLAttributes<HTMLButtonElement> {
     mobile?: boolean;
   }
+
+  const AuthLink = ({
+    auth,
+    className,
+  }: {
+    auth: string | undefined;
+    className?: string;
+  }) => {
+    console.log("auth?", typeof auth, auth);
+    if (auth) {
+      return (
+        <Form method="post" className={cn("flex", className)}>
+          <button className="py-2 px-4 uppercase text-clamp-base cursor-pointer text-left bg-white/70 rounded-md z-[1000]">
+            Log Out
+          </button>
+        </Form>
+      );
+    }
+    return (
+      <NavLink
+        to="/login"
+        className={cn(
+          "leading-10 py-2 px-4 uppercase text-clamp-base cursor-pointer text-left bg-white/70 rounded-md z-[1000]",
+          className
+        )}
+      >
+        login
+      </NavLink>
+    );
+  };
   const RouteView = ({ className, mobile, ...props }: RouteViewProps) => {
     return routes.map((route, index) => (
       <button
@@ -61,6 +93,7 @@ const Navigation = ({ scrollAction, routes }: NavigationProps) => {
         )}
       </button>
       <RouteView className="hidden md:block" />
+      <AuthLink auth={auth} className="hidden md:block" />
       <section
         className={`fixed inset-[0_0_0_32vw] bg-brand/50 backdrop-blur-sm flex flex-col gap-4 pt-28 px-8 md:hidden md:flex-row md:pt-0 md:px-[1px] md:bg-transparent md:backdrop-blur-none ${
           mobileNavActive ? "translate-x-[0vw]" : "translate-x-[78vw]"
@@ -68,6 +101,7 @@ const Navigation = ({ scrollAction, routes }: NavigationProps) => {
         id="primary-navigation"
       >
         <RouteView mobile={true} />
+        <AuthLink auth={auth} />
       </section>
     </nav>
   );

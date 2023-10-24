@@ -1,11 +1,16 @@
 // NOTE: This is the index route the "root route"
 import { AdvancedVideo } from "@cloudinary/react";
-import type { LoaderFunctionArgs, MetaFunction } from "@remix-run/cloudflare";
+import type {
+  ActionFunctionArgs,
+  LoaderFunctionArgs,
+  MetaFunction,
+} from "@remix-run/cloudflare";
 import { useLoaderData } from "@remix-run/react";
 import { GraphQLClient, gql } from "graphql-request";
 import { useRef } from "react";
 import { Logo, Navigation } from "~/components";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
+import { auth } from "~/lib/auth.server";
 import { cld } from "~/lib/utils";
 const PAGE_QUERY = gql`
   query page($slug: String) {
@@ -28,6 +33,10 @@ export const meta: MetaFunction = () => {
   return [{ title: "Visual Flight Technology" }];
 };
 
+export const action = async ({ request }: ActionFunctionArgs) => {
+  await auth.logout(request, { redirectTo: "/" });
+};
+
 type Service = {
   title: string;
   caption: string;
@@ -44,23 +53,32 @@ type Page = {
   services: Services;
 };
 
-type Response = { page: Page };
+type Response = { page: Page; email?: string };
 
-export const loader = async ({ context }: LoaderFunctionArgs) => {
+export const loader = async ({ request, context }: LoaderFunctionArgs) => {
   const endPoint =
     "https://api-us-east-1-shared-usea1-02.hygraph.com/v2/clj1ad01r1cbl01uq5i4m0c2p/master";
 
   const graphQLClient = new GraphQLClient(endPoint, { fetch: fetch });
   const variables = { slug: "visual-flight-technology" };
 
-  const response = await graphQLClient.request(PAGE_QUERY, variables);
-  console.log("_index: .env ", context.env);
-  return response;
+  const response = (await graphQLClient.request(
+    PAGE_QUERY,
+    variables
+  )) as Response;
+  const email = await auth.isAuthenticated(request, {
+    // failureRedirect: "/login",
+  });
+  // TODO: remove this before committing the code.
+  console.log("_index: .env ", context);
+
+  return { email, page: response.page };
 };
+
 const navRoutes = [{ cta: "services" }, { cta: "contact" }];
 
 export default function Index() {
-  const { page } = useLoaderData<Response>();
+  const { email, page } = useLoaderData<Response>();
   const serviceEl = useRef<HTMLDivElement | null>(null);
   const contactEl = useRef<HTMLDivElement | null>(null);
 
@@ -74,7 +92,7 @@ export default function Index() {
       contactEl.current?.scrollIntoView(false);
     }
   };
-
+  console.log("INDEX: =========", email);
   return (
     <main>
       <header className="top-0 left-0 right-0  z-50">
@@ -82,7 +100,11 @@ export default function Index() {
           <div className="w-16 md:w-20">
             <Logo />
           </div>
-          <Navigation scrollAction={handleScroll} routes={navRoutes} />
+          <Navigation
+            scrollAction={handleScroll}
+            routes={navRoutes}
+            auth={email}
+          />
         </div>
       </header>
 
