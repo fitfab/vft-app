@@ -4,7 +4,7 @@ import type {
   LoaderFunctionArgs,
   MetaFunction,
 } from "@remix-run/cloudflare";
-import { Form, NavLink, useLoaderData } from "@remix-run/react";
+import { Form, NavLink, useLoaderData, useNavigation } from "@remix-run/react";
 import { GraphQLClient, gql } from "graphql-request";
 import { Logo } from "~/components";
 import { Button } from "~/components/ui/button";
@@ -59,9 +59,25 @@ const HERO_MUTATION = gql`
   }
 `;
 
-export const action = async ({ request }: ActionFunctionArgs) => {
-  console.log("Request", request);
-  return null;
+export const action = async ({ request, context }: ActionFunctionArgs) => {
+  const formData = await request.formData();
+  const headers = await request.headers;
+  const graphQLClient = new GraphQLClient(context.HYGRAPH_ENDPOINT!, {
+    headers: {
+      authorization: `Bearer ${context.HYGRAPH_TOKEN}`,
+    },
+    fetch: fetch,
+  });
+  const variables = {
+    id: "clj1vcd411rjr0bldlf253cdj",
+    videoId: formData.get("videoId"),
+  };
+
+  const response = await graphQLClient.request(HERO_MUTATION, variables);
+  // const email = await auth.isAuthenticated(request);
+
+  // console.log("ACTION: Mutation", formData.get("videoId"), response);
+  return response;
 };
 
 type Service = {
@@ -104,6 +120,9 @@ export const loader = async ({ request, context }: LoaderFunctionArgs) => {
 
 export default function Index() {
   const { email, page } = useLoaderData<Response>();
+  const navigation = useNavigation();
+
+  console.log(navigation);
 
   return (
     <main>
@@ -114,28 +133,32 @@ export default function Index() {
               <Logo />
             </NavLink>
           </div>
+          <p className="p-4 underline decoration-brand decoration-2">
+            {email ? email : "Need to login"}
+          </p>
         </div>
       </header>
 
       <section className="flex gap-8 md:container md:mx-auto px-4 pt-8 pb-10">
-        <div>
-          <h2 className="scroll-m-20 pb-2 text-clamp-xl font-semibold tracking-tight transition-colors first:mt-0">
-            Hero Video
-          </h2>
-          <AdvancedVideo
-            className="relative -z-[1]"
-            muted
-            loop
-            autoPlay
-            cldVid={cld.video(page.heroes[0].videoId).quality("auto")}
-          />
+        <div className="bg-slate-600 flex w-[50%] min-h-full rounded-md overflow-hidden">
+          {navigation.state === "loading" ||
+          navigation.state === "submitting" ? (
+            <p>LOADING</p>
+          ) : (
+            <AdvancedVideo
+              muted
+              loop
+              autoPlay
+              cldVid={cld.video(page.heroes[0].videoId).quality("auto")}
+            />
+          )}
         </div>
         <Form
           method="post"
-          className="flex flex-col w-full h-full m-[5rem_auto] border-[1px] p-6 shadow-md rounded-md"
+          className="flex flex-col w-[50%] h-full m-[3.5rem_auto] border-[1px] p-6 shadow-md rounded-md"
         >
           <h3 className="flex justify-between text-lg my-4 uppercase">
-            <span>Update video</span>
+            <span className="tracking-wide">Update video</span>
             <a
               href="https://console.cloudinary.com/"
               target="_blank"
@@ -148,13 +171,17 @@ export default function Index() {
             <Label htmlFor="videoId">Video ID</Label>
             <Input
               type="text"
-              name="videoID"
+              name="videoId"
               id="videoId"
               placeholder="Enter video ID"
             />
           </fieldset>
 
-          <Button variant="default" className="mt-6 uppercase">
+          <Button
+            variant="default"
+            className="mt-6 uppercase"
+            disabled={navigation.state === "submitting"}
+          >
             update & publish
           </Button>
         </Form>

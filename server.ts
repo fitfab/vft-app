@@ -18,6 +18,7 @@ if (process.env.NODE_ENV === "development") {
 interface Env {
   CLOUDINARY_CLOUDNAME?: string;
   HYGRAPH_ENDPOINT?: string;
+  HYGRAPH_TOKEN?: string;
   ADMIN?: string;
   ADMIN_PASSWORD?: string;
 }
@@ -33,6 +34,7 @@ export const onRequest = createPagesFunctionHandler({
   getLoadContext: (context: Context) => ({
     CLOUDINARY_CLOUDNAME: context.env.CLOUDINARY_CLOUDNAME,
     HYGRAPH_ENDPOINT: context.env.HYGRAPH_ENDPOINT,
+    HYGRAPH_TOKEN: context.env.HYGRAPH_TOKEN,
     ADMIN: context.env.ADMIN,
     ADMIN_PASSWORD: context.env.ADMIN_PASSWORD,
   }),
