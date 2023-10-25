@@ -1,23 +1,30 @@
-// NOTE: This is the index route the "root route"
 import { AdvancedVideo } from "@cloudinary/react";
 import type {
   ActionFunctionArgs,
   LoaderFunctionArgs,
   MetaFunction,
 } from "@remix-run/cloudflare";
-import { useLoaderData } from "@remix-run/react";
+import { Form, NavLink, useLoaderData } from "@remix-run/react";
 import { GraphQLClient, gql } from "graphql-request";
-import { useRef } from "react";
-import { Logo, Navigation } from "~/components";
+import { Logo } from "~/components";
+import { Button } from "~/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
+import { Input } from "~/components/ui/input";
+import { Label } from "~/components/ui/label";
 import { auth } from "~/lib/auth.server";
 import { cld } from "~/lib/utils";
+
+export const meta: MetaFunction = () => {
+  return [{ title: "EDIT: Visual Flight Technology" }];
+};
+
 const PAGE_QUERY = gql`
   query page($slug: String) {
     page(where: { slug: $slug }) {
       title
       slug
       heroes {
+        id
         videoId
       }
       services {
@@ -32,12 +39,29 @@ const PAGE_QUERY = gql`
   }
 `;
 
-export const meta: MetaFunction = () => {
-  return [{ title: "Visual Flight Technology" }];
-};
+/**
+ * Mutation variable
+   {
+      "id": "clj1vcd411rjr0bldlf253cdj",
+      "videoId": "pexels_videos_1739010_jxucbo"
+    }
+ */
+const HERO_MUTATION = gql`
+  mutation UpdateHero($id: ID, $videoId: String) {
+    updateHero(where: { id: $id }, data: { videoId: $videoId }) {
+      id
+      videoId
+    }
+    publishHero(where: { id: $id }, to: PUBLISHED) {
+      videoId
+      id
+    }
+  }
+`;
 
 export const action = async ({ request }: ActionFunctionArgs) => {
-  await auth.logout(request, { redirectTo: "/" });
+  console.log("Request", request);
+  return null;
 };
 
 type Service = {
@@ -78,48 +102,66 @@ export const loader = async ({ request, context }: LoaderFunctionArgs) => {
   return { email, page: response.page };
 };
 
-const navRoutes = [{ cta: "services" }, { cta: "contact" }];
-
 export default function Index() {
   const { email, page } = useLoaderData<Response>();
-  const serviceEl = useRef<HTMLDivElement | null>(null);
-  const contactEl = useRef<HTMLDivElement | null>(null);
-
-  const handleScroll = (event: React.MouseEvent<HTMLButtonElement>) => {
-    const action = event.currentTarget.textContent?.toLowerCase();
-
-    // 👇 Scroll to the section
-    if (action === "services") {
-      serviceEl.current?.scrollIntoView(false);
-    } else {
-      contactEl.current?.scrollIntoView(false);
-    }
-  };
 
   return (
     <main>
       <header className="top-0 left-0 right-0  z-50">
         <div className="fixed top-0 right-0 left-0 flex justify-between md:container md:mx-auto md:relative p-4 bg-white/50">
           <div className="w-16 md:w-20">
-            <Logo />
+            <NavLink to="/">
+              <Logo />
+            </NavLink>
           </div>
-          <Navigation
-            scrollAction={handleScroll}
-            routes={navRoutes}
-            auth={email}
-          />
         </div>
       </header>
 
-      <AdvancedVideo
-        className="relative w-[100vw] -z-[1]"
-        muted
-        loop
-        autoPlay
-        cldVid={cld.video(page.heroes[0].videoId).quality("auto")}
-      />
+      <section className="flex gap-8 md:container md:mx-auto px-4 pt-8 pb-10">
+        <div>
+          <h2 className="scroll-m-20 pb-2 text-clamp-xl font-semibold tracking-tight transition-colors first:mt-0">
+            Hero Video
+          </h2>
+          <AdvancedVideo
+            className="relative -z-[1]"
+            muted
+            loop
+            autoPlay
+            cldVid={cld.video(page.heroes[0].videoId).quality("auto")}
+          />
+        </div>
+        <Form
+          method="post"
+          className="flex flex-col w-full h-full m-[5rem_auto] border-[1px] p-6 shadow-md rounded-md"
+        >
+          <h3 className="flex justify-between text-lg my-4 uppercase">
+            <span>Update video</span>
+            <a
+              href="https://console.cloudinary.com/"
+              target="_blank"
+              className=" text-blue-700 text-xs my-1 normal-case"
+            >
+              Get videoID from Cloudinary
+            </a>
+          </h3>
+          <fieldset className="mb-4">
+            <Label htmlFor="videoId">Video ID</Label>
+            <Input
+              type="text"
+              name="videoID"
+              id="videoId"
+              placeholder="Enter video ID"
+            />
+          </fieldset>
+
+          <Button variant="default" className="mt-6 uppercase">
+            update & publish
+          </Button>
+        </Form>
+      </section>
+
       <section className="md:container md:mx-auto px-4 pt-8 pb-10">
-        <div ref={serviceEl}>
+        <div>
           <h2 className="scroll-m-20 pb-2 text-clamp-xl font-semibold tracking-tight transition-colors first:mt-0">
             Services
           </h2>
@@ -136,31 +178,6 @@ export default function Index() {
               );
             })}
           </div>
-        </div>
-      </section>
-      <section className=" bg-brand text-white min-h-[30vh]">
-        <div
-          className="md:container md:mx-auto px-4 pt-8 pb-10"
-          ref={contactEl}
-        >
-          <h2 className="scroll-m-20 pb-2 text-clamp-xl font-semibold tracking-tight transition-colors first:mt-0">
-            Contact Details
-          </h2>
-          <p className="text-clamp-base mb-6 w-[75%]">
-            I take the art of filmmaking to new heights with cutting-edge drone
-            technology. I value your engagement and am eager to assist you in
-            realizing your creative vision.
-          </p>
-          <p className="text-clamp-base mb-6">
-            Please reach out if you any question:
-          </p>
-          <p className="text-clamp-base">Andrew Pollino</p>
-          <p className="text-clamp-base">
-            <strong>Email</strong>: pollino146@gmail.com
-          </p>
-          <p className="text-clamp-base">
-            <strong>Phone</strong>: 203-957-2779
-          </p>
         </div>
       </section>
     </main>

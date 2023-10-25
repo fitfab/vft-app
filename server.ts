@@ -16,10 +16,10 @@ if (process.env.NODE_ENV === "development") {
  */
 
 interface Env {
+  CLOUDINARY_CLOUDNAME?: string;
+  HYGRAPH_ENDPOINT?: string;
   ADMIN?: string;
   ADMIN_PASSWORD?: string;
-  USER?: string;
-  USER_PASSWORD?: string;
 }
 
 type Context = EventContext<Env, string, unknown>;
@@ -31,10 +31,10 @@ declare module "@remix-run/server-runtime" {
 export const onRequest = createPagesFunctionHandler({
   build,
   getLoadContext: (context: Context) => ({
+    CLOUDINARY_CLOUDNAME: context.env.CLOUDINARY_CLOUDNAME,
+    HYGRAPH_ENDPOINT: context.env.HYGRAPH_ENDPOINT,
     ADMIN: context.env.ADMIN,
     ADMIN_PASSWORD: context.env.ADMIN_PASSWORD,
-    USER: context.env.USER,
-    USER_PASSWORD: context.env.USER_PASSWORD,
   }),
   mode: build.mode,
 });
