@@ -1,10 +1,17 @@
 import { AdvancedVideo } from "@cloudinary/react";
-import type {
-  ActionFunctionArgs,
-  LoaderFunctionArgs,
-  MetaFunction,
+import {
+  json,
+  type ActionFunctionArgs,
+  type LoaderFunctionArgs,
+  type MetaFunction,
 } from "@remix-run/cloudflare";
-import { Form, NavLink, useLoaderData, useNavigation } from "@remix-run/react";
+import {
+  Form,
+  NavLink,
+  useActionData,
+  useLoaderData,
+  useNavigation,
+} from "@remix-run/react";
 import { GraphQLClient, gql } from "graphql-request";
 import { Logo } from "~/components";
 import { Button } from "~/components/ui/button";
@@ -12,7 +19,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
 import { auth } from "~/lib/auth.server";
-import { cld } from "~/lib/utils";
+import { cld, validateForm } from "~/lib/utils";
+
+import { z } from "zod";
 
 export const meta: MetaFunction = () => {
   return [{ title: "EDIT: Visual Flight Technology" }];
@@ -39,13 +48,6 @@ const PAGE_QUERY = gql`
   }
 `;
 
-/**
- * Mutation variable
-   {
-      "id": "clj1vcd411rjr0bldlf253cdj",
-      "videoId": "pexels_videos_1739010_jxucbo"
-    }
- */
 const HERO_MUTATION = gql`
   mutation UpdateHero($id: ID, $videoId: String) {
     updateHero(where: { id: $id }, data: { videoId: $videoId }) {
@@ -58,10 +60,28 @@ const HERO_MUTATION = gql`
     }
   }
 `;
-
+const VideoSchema = z.object({
+  id: z.string(),
+  videoId: z.string().min(1, { message: "This video ID is required" }),
+  errors: z
+    .object({
+      videoId: z.string(),
+    })
+    .optional(),
+});
+type VideoProps = z.infer<typeof VideoSchema>;
 export const action = async ({ request, context }: ActionFunctionArgs) => {
   const formData = await request.formData();
   const headers = await request.headers;
+
+  const { data, errors } = await validateForm({
+    formData,
+    schema: VideoSchema,
+  });
+
+  if (errors) {
+    return json({ data, errors });
+  }
   const graphQLClient = new GraphQLClient(context.HYGRAPH_ENDPOINT!, {
     headers: {
       authorization: `Bearer ${context.HYGRAPH_TOKEN}`,
@@ -69,14 +89,12 @@ export const action = async ({ request, context }: ActionFunctionArgs) => {
     fetch: fetch,
   });
   const variables = {
-    id: "clj1vcd411rjr0bldlf253cdj",
-    videoId: formData.get("videoId"),
+    id: data.id,
+    videoId: data.videoId,
   };
 
   const response = await graphQLClient.request(HERO_MUTATION, variables);
   // const email = await auth.isAuthenticated(request);
-
-  // console.log("ACTION: Mutation", formData.get("videoId"), response);
   return response;
 };
 
@@ -91,6 +109,7 @@ type Service = {
 
 type Heroes = {
   videoId: string;
+  id: string;
 };
 type Services = Service[];
 
@@ -120,9 +139,9 @@ export const loader = async ({ request, context }: LoaderFunctionArgs) => {
 
 export default function Index() {
   const { email, page } = useLoaderData<Response>();
-  const navigation = useNavigation();
+  const actionData = useActionData<VideoProps>();
 
-  console.log(navigation);
+  const navigation = useNavigation();
 
   return (
     <main>
@@ -140,10 +159,10 @@ export default function Index() {
       </header>
 
       <section className="flex gap-8 md:container md:mx-auto px-4 pt-8 pb-10">
-        <div className="bg-slate-600 flex w-[50%] min-h-full rounded-md overflow-hidden">
+        <div className="bg-slate-300 flex justify-center w-[50%] min-h-full rounded-md overflow-hidden">
           {navigation.state === "loading" ||
           navigation.state === "submitting" ? (
-            <p>LOADING</p>
+            <p className="m-auto min-h-[366px]">LOADING</p>
           ) : (
             <AdvancedVideo
               muted
@@ -155,7 +174,7 @@ export default function Index() {
         </div>
         <Form
           method="post"
-          className="flex flex-col w-[50%] h-full m-[3.5rem_auto] border-[1px] p-6 shadow-md rounded-md"
+          className="flex flex-col w-[50%] min-h-full border-[1px] p-6 shadow-md rounded-md"
         >
           <h3 className="flex justify-between text-lg my-4 uppercase">
             <span className="tracking-wide">Update video</span>
@@ -167,6 +186,7 @@ export default function Index() {
               Get videoID from Cloudinary
             </a>
           </h3>
+          <input type="hidden" name="id" defaultValue={page.heroes[0].id} />
           <fieldset className="mb-4">
             <Label htmlFor="videoId">Video ID</Label>
             <Input
@@ -175,6 +195,13 @@ export default function Index() {
               id="videoId"
               placeholder="Enter video ID"
             />
+            {actionData?.errors?.videoId ? (
+              <span className="text-red-600 text-sm">
+                {actionData?.errors?.videoId}
+              </span>
+            ) : (
+              <span className="text-sm">required field</span>
+            )}
           </fieldset>
 
           <Button
