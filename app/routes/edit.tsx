@@ -21,6 +21,7 @@ import { Label } from "~/components/ui/label";
 import { auth } from "~/lib/auth.server";
 import { cld, validateForm } from "~/lib/utils";
 
+import { Loader2 } from "lucide-react";
 import { z } from "zod";
 
 export const meta: MetaFunction = () => {
@@ -159,10 +160,12 @@ export default function Index() {
       </header>
 
       <section className="flex gap-8 md:container md:mx-auto px-4 pt-8 pb-10">
-        <div className="bg-slate-300 flex justify-center w-[50%] min-h-full rounded-md overflow-hidden">
+        <div className="bg-slate-100 flex justify-center w-[50%] min-h-full rounded-md overflow-hidden">
           {navigation.state === "loading" ||
           navigation.state === "submitting" ? (
-            <p className="m-auto min-h-[366px]">LOADING</p>
+            <p className="flex justify-center items-center m-auto min-h-[366px]">
+              <Loader2 className="animate-spin" size={96} />
+            </p>
           ) : (
             <AdvancedVideo
               muted
